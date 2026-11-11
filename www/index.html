@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>يومي</title>
+<style>
+:root{--bg:#eef3f1;--ink:#12302a;--mute:#6b8179;--acc:#0b7a63;--line:#d3dfda;--late:#b4472f;--on:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1a17;--ink:#e4efeb;--mute:#8aa399;--acc:#3fc4a3;--line:#243a34;--late:#f08a70;--on:#0e1a17}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Noto Sans Arabic",sans-serif;padding:max(env(safe-area-inset-top),16px) 20px calc(96px + env(safe-area-inset-bottom))}
+#hi{font-size:20px;font-weight:700;margin-top:4px}
+header{display:flex;align-items:center;gap:16px;margin-top:6px}
+.hd{flex:1}
+#num{font-size:84px;font-weight:800;line-height:1;color:var(--acc)}
+#wd{font-size:24px;font-weight:700}
+#mo{font-size:17px;color:var(--mute)}
+#gear,#statb{background:none;border:0;font-size:24px;color:var(--mute);padding:8px}
+.tg{display:flex;gap:8px;margin:4px 0 18px}
+.ch{display:flex;align-items:flex-end;gap:4px;height:130px;margin-bottom:20px}
+.col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:4px}
+.col i{display:block;background:var(--acc);border-radius:3px}
+.col i.nil{background:var(--line)}
+.col i.zero{background:var(--late)}
+.col small{text-align:center;font-size:12px;color:var(--mute)}
+.st{color:var(--mute);margin:6px 0}
+h4{margin:22px 0 4px;font-size:17px}
+.hr{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.hr .bar{grid-column:1/3;margin:0}
+.hr b{color:var(--acc)}
+nav{display:flex;gap:8px;overflow-x:auto;margin:14px -20px 0;padding:0 20px 4px}
+nav button,.tg button{flex:none;padding:9px 16px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:16px;font-family:inherit}
+nav .on,.tg .on{background:var(--acc);color:var(--on);border-color:var(--acc);font-weight:700}
+#sub{margin:16px 0 8px;color:var(--mute)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
+.t{padding:14px 0;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:14px}
+.mid{flex:1;min-width:0}
+.mid span{font-size:18px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--mute);font-size:13px;margin-top:3px}
+.meta .late{color:var(--late)}
+.t.done .mid span{text-decoration:line-through;color:var(--mute)}
+.cb{appearance:none;-webkit-appearance:none;flex:none;width:26px;height:26px;border:2px solid var(--mute);border-radius:50%;margin:0;display:grid;place-items:center}
+.cb:checked{background:var(--acc);border-color:var(--acc)}
+.cb:checked::after{content:"✓";color:var(--on);font-size:16px;font-weight:700}
+.sub{display:flex;align-items:center;gap:12px;margin:10px 0 0;margin-inline-start:40px;font-size:16px}
+.sub .cb{width:22px;height:22px}
+.x{background:none;border:0;color:var(--mute);font-size:17px;padding:8px}
+.empty{padding:40px 0;color:var(--mute);text-align:center;line-height:1.7}
+.lnk{display:block;margin:16px auto 0;background:none;border:0;color:var(--acc);font-size:16px;font-weight:700;font-family:inherit;padding:10px}
+.lnk.dl{color:var(--late);font-weight:400}
+#add{position:fixed;inset:auto 20px calc(16px + env(safe-area-inset-bottom)) 20px;padding:16px;border:0;border-radius:14px;background:var(--acc);color:var(--on);font-size:18px;font-weight:700;font-family:inherit}
+dialog{border:0;border-radius:18px;width:calc(100% - 32px);max-width:420px;max-height:90vh;overflow:auto;background:var(--bg);color:var(--ink);padding:22px}
+dialog::backdrop{background:#000a}
+h3{margin:0 0 12px;font-size:20px}
+input[type=text],input[type=date],select,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:17px;margin-bottom:12px;font-family:inherit}
+.days{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:14px}
+.days label{display:flex;align-items:center;gap:6px;font-size:16px}
+.days input{accent-color:var(--acc);width:18px;height:18px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 14px;font-size:17px}
+.sw input{appearance:none;-webkit-appearance:none;flex:none;width:46px;height:26px;border-radius:13px;background:var(--line);position:relative;margin:0}
+.sw input::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked{background:var(--acc)}
+.sw input:checked::after{inset-inline-start:23px}
+.sw select{width:auto;margin:0;padding:10px}
+.hint{color:var(--mute);font-size:13px;margin:-6px 0 16px;line-height:1.6}
+.swat{display:flex;gap:10px}
+.swat button{width:28px;height:28px;border-radius:50%;border:2px solid transparent;padding:0}
+.swat .on{outline:2px solid var(--ink);outline-offset:2px}
+.row{display:flex;gap:10px}
+.row button{flex:1;padding:13px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:17px;font-family:inherit}
+.row .p{background:var(--acc);color:var(--on);border:0;font-weight:700}
+</style>
+</head>
+<body>
+<div id="hi"></div>
+<header>
+  <div id="num"></div>
+  <div class="hd"><div id="wd"></div><div id="mo"></div></div>
+  <button id="statb" aria-label="الإحصائيات">📊</button>
+  <button id="gear" aria-label="الإعدادات">⚙</button>
+</header>
+<nav id="nav"></nav>
+<p id="sub"></p>
+<div class="bar"><i id="bar"></i></div>
+<div id="list"></div>
+<button id="add">+ مهمة جديدة</button>
+
+<dialog id="dlg">
+  <h3>مهمة جديدة</h3>
+  <input type="text" id="title" placeholder="وش المطلوب؟" maxlength="120">
+  <select id="type">
+    <option value="once">مرة واحدة</option>
+    <option value="sched">مجدولة بتاريخ</option>
+    <option value="habit">عادة متكررة</option>
+  </select>
+  <div id="dateWrap" hidden><input type="date" id="date2"></div>
+  <div class="days" id="days" hidden>
+    <label><input type="checkbox" value="0">الأحد</label>
+    <label><input type="checkbox" value="1">الاثنين</label>
+    <label><input type="checkbox" value="2">الثلاثاء</label>
+    <label><input type="checkbox" value="3">الأربعاء</label>
+    <label><input type="checkbox" value="4">الخميس</label>
+    <label><input type="checkbox" value="5">الجمعة</label>
+    <label><input type="checkbox" value="6">السبت</label>
+  </div>
+  <select id="list2"></select>
+  <textarea id="subs" rows="3" placeholder="مهام فرعية (اختياري): كل مهمة في سطر"></textarea>
+  <label class="sw"><span>أظهرها في يومي</span><input type="checkbox" id="show" checked></label>
+  <div class="row"><button id="save" class="p">حفظ المهمة</button><button id="cancel">إلغاء</button></div>
+</dialog>
+
+<dialog id="ndlg">
+  <h3>أهلاً بك في يومي</h3>
+  <input type="text" id="nIn" placeholder="وش اسمك؟" maxlength="30">
+  <div class="row"><button id="nOk" class="p">ابدأ</button></div>
+</dialog>
+
+<dialog id="sdlg">
+  <h3>الإعدادات</h3>
+  <input type="text" id="sName" placeholder="اسمك" maxlength="30">
+  <label class="sw"><span>اللغة</span><select id="sLang"><option value="ar">العربية</option><option value="en">English</option></select></label>
+  <label class="sw"><span>المظهر</span><select id="sTheme"><option value="system">حسب الجهاز</option><option value="light">فاتح</option><option value="dark">داكن</option></select></label>
+  <div class="sw"><span>لون التطبيق</span><div id="sAcc" class="swat"></div></div>
+  <label class="sw"><span>حجم الخط</span><select id="sFs"><option value="0.9">صغير</option><option value="1">متوسط</option><option value="1.15">كبير</option></select></label>
+  <label class="sw"><span>إظهار رقم اليوم الكبير</span><input type="checkbox" id="sBign"></label>
+  <label class="sw"><span>إظهار شريط التقدم</span><input type="checkbox" id="sBar"></label>
+  <label class="sw"><span>إخفاء المهام المكتملة في يومي</span><input type="checkbox" id="sHide"></label>
+  <label class="sw"><span>صوت إتمام المهمة</span><input type="checkbox" id="sSound"></label>
+  <label class="sw"><span>نهاية اليوم</span><select id="sCut"><option value="0">12 منتصف الليل</option><option value="1">1 ص</option><option value="2">2 ص</option><option value="3">3 ص</option><option value="4">4 ص</option><option value="5">5 ص</option><option value="6">6 ص</option></select></label>
+  <p class="hint">يبقى «اليوم» في التطبيق شغّال لين هذه الساعة، فمهام اليوم وعاداته ما تتبدل إلا بعدها.</p>
+  <h4>البيانات</h4>
+  <div class="row" style="margin-bottom:10px"><button id="bk">نسخة احتياطية</button><button id="im">استيراد</button></div>
+  <p class="hint">النسخة الاحتياطية ملف تحفظه في Drive أو ترسله لنفسك، وتستورده من هنا في أي وقت أو على جهاز جديد.</p>
+  <input type="file" id="impF" hidden>
+  <div class="row"><button id="sClose" class="p">تم</button></div>
+</dialog>
+
+<script>
+let LG='ar',LOC='ar-EG';
+const EN={
+'يومي':'Today','＋ قائمة':'+ List','اسم القائمة الجديدة':'New list name','أهلاً ':'Hello ',
+'ما عندك مهام اليوم':'No tasks today','القائمة فاضية':'This list is empty','خلصت كل المهام 🎉':'All done 🎉',
+'أنجزت ':'Done ',' من ':' of ',
+'أضف مهمة وخلها تظهر في يومي، وتلقاها هنا أول ما تفتح التطبيق':'Add a task and show it in Today to see it here when you open the app',
+'اضغط «مهمة جديدة» لإضافة أول مهمة':'Tap “New task” to add your first one',
+'إخفاء المنجزة':'Hide completed','إظهار المنجزة (':'Show completed (',
+'حذف القائمة':'Delete list','حذف قائمة «':'Delete list “','» وكل مهامها؟':'” and all its tasks?',
+'حذف «':'Delete “','»؟':'”?','كل يوم':'Every day','، ':', ',' متتالية':' in a row','متأخرة':'Overdue',
+'القائمة: ':'List: ','اختر يوماً واحداً على الأقل':'Pick at least one day','المهام':'Tasks',
+'٪':'%','التزامك':'Your commitment','آخر ':'Last ',' أيام':' days',' يوماً':' days',' مهمة مطلوبة':' tasks due',
+'لسا ما فيه مهام مطلوبة في هذه الفترة':'No tasks were due in this period yet','٧ أيام':'7 days','٣٠ يوماً':'30 days',
+'🔥 أطول سلسلة عادات حالية: ':'🔥 Longest current habit streak: ',' يوم متتالية':' days in a row',
+'مهام مرة واحدة: أنجزت ':'One-time tasks: done ','، ومتبقي ':', remaining ','التزامك بكل عادة':'Commitment per habit',
+'الأحد':'Sunday','الاثنين':'Monday','الثلاثاء':'Tuesday','الأربعاء':'Wednesday','الخميس':'Thursday','الجمعة':'Friday','السبت':'Saturday',
+'أهلاً بك في يومي':'Welcome to Yawmi','وش اسمك؟':'What is your name?','ابدأ':'Start','اسمك':'Your name',
+'الإعدادات':'Settings','اللغة':'Language','المظهر':'Appearance','حسب الجهاز':'Follow device','فاتح':'Light','داكن':'Dark',
+'لون التطبيق':'App color','حجم الخط':'Font size','صغير':'Small','متوسط':'Medium','كبير':'Large',
+'إظهار رقم اليوم الكبير':'Show big day number','إظهار شريط التقدم':'Show progress bar',
+'إخفاء المهام المكتملة في يومي':'Hide completed tasks in Today','صوت إتمام المهمة':'Task completion sound',
+'نهاية اليوم':'End of day','12 منتصف الليل':'12 AM (midnight)','1 ص':'1 AM','2 ص':'2 AM','3 ص':'3 AM','4 ص':'4 AM','5 ص':'5 AM','6 ص':'6 AM',
+'يبقى «اليوم» في التطبيق شغّال لين هذه الساعة، فمهام اليوم وعاداته ما تتبدل إلا بعدها.':'The app keeps showing the current day until this hour, so the day tasks and habits only change after it.',
+'تم':'Done','مهمة جديدة':'New task','+ مهمة جديدة':'+ New task','وش المطلوب؟':'What needs doing?',
+'مرة واحدة':'One-time','مجدولة بتاريخ':'Scheduled for a date','عادة متكررة':'Recurring habit',
+'مهام فرعية (اختياري): كل مهمة في سطر':'Subtasks (optional): one per line','أظهرها في يومي':'Show in Today',
+'حفظ المهمة':'Save task','إلغاء':'Cancel',
+'البيانات':'Data','نسخة احتياطية':'Backup','استيراد':'Import',
+'النسخة الاحتياطية ملف تحفظه في Drive أو ترسله لنفسك، وتستورده من هنا في أي وقت أو على جهاز جديد.':'A backup is a file you can save to Drive or send to yourself, then import here any time or on a new device.',
+'حفظ النسخة الاحتياطية':'Save backup','تعذّر إنشاء النسخة الاحتياطية':'Could not create the backup',
+'سيستبدل الاستيراد كل بياناتك الحالية. المتابعة؟':'Importing will replace all your current data. Continue?',
+'الملف غير صالح':'This file is not a valid backup','تم استيراد بياناتك':'Your data was imported'
+};
+const tr=s=>(LG!=='ar'&&EN[s])||s;
+const SX=[];
+(function(){
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;
+  while(n=w.nextNode()){const v=n.nodeValue.trim();if(v&&/[\u0600-\u06FF]/.test(v)&&n.parentNode.tagName!=='SCRIPT')SX.push([n,v])}
+  document.querySelectorAll('[placeholder]').forEach(e=>{const v=e.getAttribute('placeholder');if(/[\u0600-\u06FF]/.test(v))SX.push([e,v])});
+})();
+function lang(){
+  LG=S.set.lang;LOC=LG==='ar'?'ar-EG':'en-US';
+  document.documentElement.lang=LG;document.documentElement.dir=LG==='ar'?'rtl':'ltr';
+  SX.forEach(([n,v])=>n.nodeType===3?n.nodeValue=tr(v):n.setAttribute('placeholder',tr(v)));
+}
+const PAL=[['#0b7a63','#3fc4a3','#eef3f1','#0e1a17','#d3dfda','#243a34'],['#2358d6','#7ea6ff','#eef2fa','#0e1420','#d5ddee','#232d44'],['#6b3fd1','#b79cff','#f2eff9','#141024','#ded8ee','#2e2748'],['#c2570c','#ffa05c','#f8f1ea','#1c140d','#e8dccf','#3a2c1f'],['#c2335f','#ff8fb0','#f9eff2','#1d1017','#ecd9df','#3b2430'],['#3d4a5c','#aab6c8','#f0f1f3','#121417','#d9dce1','#2a2e35']];
+function theme(){
+  const dk=S.set.theme==='dark'||(S.set.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  const p=PAL[S.set.acc]||PAL[0],r=document.documentElement.style;
+  const v={'--acc':p[dk?1:0],'--bg':p[dk?3:2],'--line':p[dk?5:4],'--ink':dk?'#e8edf2':'#16202a','--mute':dk?'#93a0ad':'#6b7885','--late':dk?'#f08a70':'#b4472f','--on':dk?p[3]:'#fff'};
+  for(const k in v)r.setProperty(k,v[k]);
+  document.body.style.zoom=S.set.fs;
+}
+function buildSw(){
+  const c=$('#sAcc');c.innerHTML='';
+  PAL.forEach((p,i)=>{const b=document.createElement('button');b.style.background=p[0];if(i===(S.set.acc||0))b.className='on';b.onclick=()=>{S.set.acc=i;save();theme();buildSw()};c.appendChild(b)});
+}
+const DEF={hide:false,sound:true,cut:0,theme:'system',acc:0,fs:1,lang:'ar',bar:true,bign:true};
+const K='yawmi2',$=s=>document.querySelector(s);
+const DN=[tr('الأحد'),tr('الاثنين'),tr('الثلاثاء'),tr('الأربعاء'),tr('الخميس'),tr('الجمعة'),tr('السبت')];
+let S={tasks:[],lists:[{id:'inbox',name:tr('المهام')}],set:{hide:false,sound:true}},view='today',tmp=false,ac;
+try{const x=JSON.parse(localStorage.getItem(K));if(x&&x.tasks)S=x}catch(e){}
+S.set=Object.assign({},DEF,S.set);
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const nowD=()=>new Date(Date.now()-(S.set.cut||0)*36e5);
+const today=()=>key(nowD());
+const num=n=>n.toLocaleString(LOC);
+const rec=(t,k)=>t.d[k]||{};
+const isDone=(t,k)=>{const r=rec(t,k);return t.subs.length?t.subs.every(s=>r.s&&r.s[s.id]):!!r.done};
+const mk=(c,txt,fn)=>{const b=document.createElement('button');b.className=c;b.textContent=txt;b.onclick=fn;return b};
+
+function chime(n){
+  if(!S.set.sound)return;
+  try{
+    ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended')ac.resume();
+    (n>1?[660,880,1175]:[880]).forEach((hz,i)=>{
+      const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+i*.09;
+      o.frequency.value=hz;
+      g.gain.setValueAtTime(.0001,t);
+      g.gain.exponentialRampToValueAtTime(.25,t+.02);
+      g.gain.exponentialRampToValueAtTime(.0001,t+.28);
+      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+.3);
+    });
+  }catch(e){}
+}
+
+function slot(t,k){
+  if(t.type==='habit')return t.days.includes(nowD().getDay())?k:null;
+  if(t.type==='sched')return t.date===k?'-':null;
+  return isDone(t,'-')&&rec(t,'-').at!==k?null:'-';
+}
+
+function streak(t){
+  let n=0;const d=nowD();
+  for(let i=0;i<400;i++){
+    if(t.days.includes(d.getDay())){if(isDone(t,key(d)))n++;else if(i>0)break}
+    d.setDate(d.getDate()-1);
+  }
+  return n;
+}
+
+function tog(t,k,sid,v){
+  const was=isDone(t,k),r=t.d[k]=t.d[k]||{};
+  r.s=r.s||{};
+  if(sid==null)r.done=v;else r.s[sid]=v;
+  const now=isDone(t,k);
+  if(k==='-'){if(now&&!was)r.at=today();if(!now)delete r.at}
+  save();render();
+  if(now&&!was)chime(2);else if(sid!=null&&v)chime(1);
+}
+
+function row(t,s,k,T){
+  const ok=isDone(t,s),r=rec(t,s),el=document.createElement('div');
+  el.className='t'+(ok?' done':'');
+  const top=document.createElement('div');top.className='top';
+  const cb=document.createElement('input');cb.type='checkbox';cb.className='cb';cb.checked=ok;
+  if(t.subs.length)cb.disabled=true;else cb.onchange=()=>tog(t,s,null,cb.checked);
+  const mid=document.createElement('div');mid.className='mid';
+  const sp=document.createElement('span');sp.textContent=t.title;
+  const m=document.createElement('div');m.className='meta';
+  const add=(x,c)=>{const e=document.createElement('span');e.textContent=x;if(c)e.className=c;m.appendChild(e)};
+  if(t.type==='habit'){
+    add(t.days.length===7?tr('كل يوم'):t.days.map(d=>tr(DN[d])).join(tr('، ')));
+    const n=streak(t);if(n)add('🔥 '+num(n)+tr(' متتالية'));
+  }
+  if(t.type==='sched'){
+    const late=t.date<k&&!ok;
+    add(new Date(t.date+'T00:00:00').toLocaleDateString(LOC,{day:'numeric',month:'long'}),late?'late':'');
+    if(late)add(tr('متأخرة'),'late');
+  }
+  if(t.subs.length)add(num(t.subs.filter(x=>r.s&&r.s[x.id]).length)+'/'+num(t.subs.length));
+  const ln=S.lists.find(l=>l.id===t.list);
+  if(T&&ln&&ln.id!=='inbox')add(tr(ln.name));
+  mid.append(sp,m);
+  top.append(cb,mid,mk('x','✕',()=>{if(confirm(tr('حذف «')+t.title+tr('»؟'))){S.tasks=S.tasks.filter(x=>x!==t);save();render()}}));
+  el.appendChild(top);
+  t.subs.forEach(u=>{
+    const lb=document.createElement('label');lb.className='sub';
+    const c=document.createElement('input');c.type='checkbox';c.className='cb';c.checked=!!(r.s&&r.s[u.id]);
+    c.onchange=()=>tog(t,s,u.id,c.checked);
+    lb.append(c,u.title);el.appendChild(lb);
+  });
+  return el;
+}
+
+function render(){
+  if(view!=='today'&&view!=='stats'&&!S.lists.some(l=>l.id===view))view='today';
+  const now=nowD(),k=today(),T=view==='today',L=S.lists.find(l=>l.id===view);
+  const nav=$('#nav');nav.innerHTML='';
+  [['today',tr('يومي')]].concat(S.lists.map(l=>[l.id,tr(l.name)])).forEach(([id,name])=>{
+    const b=mk(id===view?'on':'',name,()=>{view=id;tmp=false;render()});nav.appendChild(b);
+  });
+  nav.appendChild(mk('',tr('＋ قائمة'),()=>{
+    const n=(prompt(tr('اسم القائمة الجديدة'))||'').trim();
+    if(n){const id='l'+Date.now();S.lists.push({id,name:n});view=id;save();render()}
+  }));
+  $('#num').hidden=!T||!S.set.bign;
+  $('#hi').textContent=S.name?tr('أهلاً ')+S.name:'';
+  $('#add').hidden=view==='stats';$('#bar').parentNode.hidden=view==='stats'||!S.set.bar;
+  if(view==='stats'){drawStats();return}
+  if(T){
+    $('#num').textContent=num(now.getDate());
+    $('#wd').textContent=now.toLocaleDateString(LOC,{weekday:'long'});
+    $('#mo').textContent=now.toLocaleDateString(LOC,{month:'long',year:'numeric'});
+  }else{$('#wd').textContent=tr(L.name);$('#mo').textContent=''}
+
+  const items=[];
+  S.tasks.forEach(t=>{
+    if(T){if(!t.show)return;const s=slot(t,k);if(s)items.push({t,s})}
+    else if(t.list===view)items.push({t,s:t.type==='habit'?k:'-'});
+  });
+  items.forEach(i=>i.ok=isDone(i.t,i.s));
+  items.sort((a,b)=>a.ok-b.ok);
+  const total=items.length,done=items.filter(i=>i.ok).length;
+  const hid=T&&S.set.hide&&!tmp,shown=hid?items.filter(i=>!i.ok):items;
+  $('#sub').textContent=!total?(T?tr('ما عندك مهام اليوم'):tr('القائمة فاضية')):done===total?tr('خلصت كل المهام 🎉'):tr('أنجزت ')+num(done)+tr(' من ')+num(total);
+  $('#bar').style.width=(total?done/total*100:0)+'%';
+
+  const list=$('#list');list.innerHTML='';
+  if(!total){
+    const e=document.createElement('div');e.className='empty';
+    e.textContent=T?tr('أضف مهمة وخلها تظهر في يومي، وتلقاها هنا أول ما تفتح التطبيق'):tr('اضغط «مهمة جديدة» لإضافة أول مهمة');
+    list.appendChild(e);
+  }
+  shown.forEach(i=>list.appendChild(row(i.t,i.s,k,T)));
+  if(T&&S.set.hide&&done)list.appendChild(mk('lnk',tmp?tr('إخفاء المنجزة'):tr('إظهار المنجزة (')+num(done)+')',()=>{tmp=!tmp;render()}));
+  if(!T&&L.id!=='inbox')list.appendChild(mk('lnk dl',tr('حذف القائمة'),()=>{
+    if(confirm(tr('حذف قائمة «')+tr(L.name)+tr('» وكل مهامها؟'))){S.tasks=S.tasks.filter(t=>t.list!==L.id);S.lists=S.lists.filter(l=>l!==L);view='today';save();render()}
+  }));
+}
+
+let per=7;
+const cday=t=>key(new Date(t.id-(S.set.cut||0)*36e5));
+function dayStats(d){
+  const k=key(d),wd=d.getDay();let due=0,done=0;
+  S.tasks.forEach(t=>{
+    if(t.type==='habit'){if(t.days.includes(wd)&&k>=cday(t)){due++;if(isDone(t,k))done++}}
+    else if(t.type==='sched'){if(t.date===k){due++;if(isDone(t,'-'))done++}}
+    else if(isDone(t,'-')&&rec(t,'-').at===k){due++;done++}
+  });
+  return{k,wd,due,done};
+}
+function drawStats(){
+  const dys=[],d=nowD();
+  for(let i=0;i<per;i++){dys.unshift(dayStats(new Date(d)));d.setDate(d.getDate()-1)}
+  let due=0,done=0;dys.forEach(x=>{due+=x.due;done+=x.done});
+  $('#num').hidden=false;$('#num').textContent=num(due?Math.round(done/due*100):0)+tr('٪');
+  $('#wd').textContent=tr('التزامك');
+  $('#mo').textContent=tr('آخر ')+num(per)+(per===7?tr(' أيام'):tr(' يوماً'));
+  $('#sub').textContent=due?tr('أنجزت ')+num(done)+tr(' من ')+num(due)+tr(' مهمة مطلوبة'):tr('لسا ما فيه مهام مطلوبة في هذه الفترة');
+  const list=$('#list');list.innerHTML='';
+  const tg=document.createElement('div');tg.className='tg';
+  [7,30].forEach(n=>tg.appendChild(mk(n===per?'on':'',n===7?tr('٧ أيام'):tr('٣٠ يوماً'),()=>{per=n;render()})));
+  list.appendChild(tg);
+  const ch=document.createElement('div');ch.className='ch';
+  dys.forEach(x=>{
+    const c=document.createElement('div');c.className='col';
+    const b=document.createElement('i');
+    b.style.height=(x.due?Math.max(x.done/x.due*100,4):4)+'%';
+    b.className=!x.due?'nil':!x.done?'zero':'';
+    c.appendChild(b);
+    if(per===7){const l=document.createElement('small');l.textContent=new Date(x.k+'T00:00:00').toLocaleDateString(LOC,{weekday:'narrow'});c.appendChild(l)}
+    ch.appendChild(c);
+  });
+  list.appendChild(ch);
+  const info=x=>{const p=document.createElement('p');p.className='st';p.textContent=x;list.appendChild(p)};
+  const hs=S.tasks.filter(t=>t.type==='habit'),best=Math.max(0,...hs.map(streak));
+  if(best)info(tr('🔥 أطول سلسلة عادات حالية: ')+num(best)+tr(' يوم متتالية'));
+  const once=S.tasks.filter(t=>t.type==='once'),keys=new Set(dys.map(x=>x.k));
+  const od=once.filter(t=>isDone(t,'-')&&keys.has(rec(t,'-').at)).length,op=once.filter(t=>!isDone(t,'-')).length;
+  if(once.length)info(tr('مهام مرة واحدة: أنجزت ')+num(od)+(op?tr('، ومتبقي ')+num(op):''));
+  if(hs.length){
+    const h=document.createElement('h4');h.textContent=tr('التزامك بكل عادة');list.appendChild(h);
+    hs.forEach(t=>{
+      let a=0,b=0;
+      dys.forEach(x=>{if(t.days.includes(x.wd)&&x.k>=cday(t)){b++;if(isDone(t,x.k))a++}});
+      const r=document.createElement('div');r.className='hr';
+      const n=document.createElement('span');n.textContent=t.title;
+      const p=document.createElement('b');p.textContent=b?num(Math.round(a/b*100))+tr('٪'):'—';
+      const bar=document.createElement('div');bar.className='bar';
+      const i=document.createElement('i');i.style.width=(b?a/b*100:0)+'%';bar.appendChild(i);
+      r.append(n,p,bar);list.appendChild(r);
+    });
+  }
+}
+
+function sync(){
+  const v=$('#type').value;
+  $('#dateWrap').hidden=v!=='sched';
+  $('#days').hidden=v!=='habit';
+}
+$('#type').onchange=sync;
+$('#add').onclick=()=>{
+  $('#title').value='';$('#type').value='once';$('#date2').value=today();$('#show').checked=true;$('#subs').value='';
+  document.querySelectorAll('#days input').forEach(i=>i.checked=true);
+  const sel=$('#list2');sel.innerHTML='';
+  S.lists.forEach(l=>{const o=document.createElement('option');o.value=l.id;o.textContent=tr('القائمة: ')+tr(l.name);sel.appendChild(o)});
+  sel.value=view==='today'?'inbox':view;
+  sync();$('#dlg').showModal();
+};
+$('#cancel').onclick=()=>$('#dlg').close();
+$('#save').onclick=()=>{
+  const title=$('#title').value.trim();
+  if(!title){$('#title').focus();return}
+  const type=$('#type').value;
+  const days=type==='habit'?[...document.querySelectorAll('#days input:checked')].map(i=>+i.value):[];
+  if(type==='habit'&&!days.length){alert(tr('اختر يوماً واحداً على الأقل'));return}
+  const subs=$('#subs').value.split('\n').map(x=>x.trim()).filter(Boolean).map((x,i)=>({id:i,title:x}));
+  S.tasks.push({id:Date.now(),title,list:$('#list2').value,type,days,date:$('#date2').value||today(),show:$('#show').checked,subs,d:{}});
+  save();$('#dlg').close();render();
+};
+$('#statb').onclick=()=>{view='stats';tmp=false;render()};
+$('#gear').onclick=()=>{$('#sHide').checked=S.set.hide;$('#sSound').checked=S.set.sound;$('#sCut').value=S.set.cut||0;$('#sName').value=S.name||'';$('#sLang').value=S.set.lang;$('#sTheme').value=S.set.theme;$('#sFs').value=String(S.set.fs);$('#sBar').checked=S.set.bar;$('#sBign').checked=S.set.bign;buildSw();$('#sdlg').showModal()};
+$('#sHide').onchange=e=>{S.set.hide=e.target.checked;tmp=false;save();render()};
+$('#sSound').onchange=e=>{S.set.sound=e.target.checked;save();if(e.target.checked)chime(2)};
+$('#sCut').onchange=e=>{S.set.cut=+e.target.value;save();render()};
+$('#sName').oninput=e=>{S.name=e.target.value.trim();save();render()};
+async function backup(){
+  const json=JSON.stringify({app:'yawmi',v:2,at:new Date().toISOString(),data:S});
+  const name='yawmi-backup-'+today()+'.json';
+  try{
+    const P=(window.Capacitor&&window.Capacitor.Plugins)||{};
+    if(P.Filesystem&&P.Share){
+      const r=await P.Filesystem.writeFile({path:name,data:json,directory:'CACHE',encoding:'utf8'});
+      await P.Share.share({title:name,url:r.uri,dialogTitle:tr('حفظ النسخة الاحتياطية')});
+    }else{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=name;
+      document.body.appendChild(a);a.click();a.remove();
+    }
+  }catch(e){
+    const m=String((e&&e.message)||e);
+    if(!/cancel/i.test(m))alert(tr('تعذّر إنشاء النسخة الاحتياطية')+': '+m);
+  }
+}
+$('#bk').onclick=backup;
+$('#im').onclick=()=>$('#impF').click();
+$('#impF').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';
+  if(!f)return;
+  try{
+    const d=JSON.parse(await f.text()),x=d&&d.app==='yawmi'?d.data:null;
+    if(!x||!Array.isArray(x.tasks)||!Array.isArray(x.lists))throw 0;
+    if(!confirm(tr('سيستبدل الاستيراد كل بياناتك الحالية. المتابعة؟')))return;
+    x.tasks.forEach(t=>{t.subs=t.subs||[];t.d=t.d||{};t.days=t.days||[]});
+    x.set=Object.assign({},DEF,x.set);
+    S=x;save();lang();theme();render();
+    if(!S.name)askName();
+    alert(tr('تم استيراد بياناتك'));
+  }catch(_){alert(tr('الملف غير صالح'))}
+};
+$('#sLang').onchange=e=>{S.set.lang=e.target.value;save();lang();render()};
+$('#sTheme').onchange=e=>{S.set.theme=e.target.value;save();theme()};
+$('#sFs').onchange=e=>{S.set.fs=+e.target.value;save();theme()};
+$('#sBar').onchange=e=>{S.set.bar=e.target.checked;save();render()};
+$('#sBign').onchange=e=>{S.set.bign=e.target.checked;save();render()};
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.set.theme==='system')theme()})}catch(e){}
+$('#sClose').onclick=()=>$('#sdlg').close();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+let dk=today();setInterval(()=>{if(today()!==dk){dk=today();render()}},60000);
+lang();theme();render();
+function askName(){$('#nIn').value='';$('#ndlg').showModal();$('#nIn').focus()}
+$('#ndlg').addEventListener('cancel',e=>{if(!S.name)e.preventDefault()});
+$('#nIn').onkeydown=e=>{if(e.key==='Enter')$('#nOk').click()};
+$('#nOk').onclick=()=>{const v=$('#nIn').value.trim();if(!v){$('#nIn').focus();return}S.name=v;save();$('#ndlg').close();render()};
+if(!S.name)askName();
+</script>
+</body>
+</html>
